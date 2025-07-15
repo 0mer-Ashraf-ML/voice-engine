@@ -1,0 +1,13 @@
+.env
+venv/
+/venv
+__pycache__
+orders/
+/orders
+/orders/
+conversations.json
+test.py/
+/test.py
+/test.py/
+test.pyc
+*.pyc
