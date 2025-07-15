@@ -117,15 +117,16 @@ async def lifespan(app: FastAPI):
     logger.info("Application shutdown completed")
 
 # Create FastAPI application
-app = FastAPI(
-    title=settings.APP_NAME,
-    version="1.0.0",
-    description="Voice AI platform - A complete Vapi AI clone",
-    docs_url="/docs" if settings.DEBUG else None,
-    redoc_url="/redoc" if settings.DEBUG else None,
-    openapi_url="/openapi.json" if settings.DEBUG else None,
-    lifespan=lifespan
-)
+# app = FastAPI(
+#     title=settings.APP_NAME,
+#     version="1.0.0",
+#     description="Voice AI platform - A complete Vapi AI clone",
+#     docs_url="/docs" if settings.DEBUG else None,
+#     redoc_url="/redoc" if settings.DEBUG else None,
+#     openapi_url="/openapi.json" if settings.DEBUG else None,
+#     lifespan=lifespan
+# )
+app = FastAPI()
 
 # Add middleware
 app.add_middleware(

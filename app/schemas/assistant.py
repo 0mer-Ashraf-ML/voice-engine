@@ -13,7 +13,7 @@ class AssistantCreate(BaseModel):
     model_name: str = "gpt-4o"
     model_temperature: float = 0.7
     model_max_tokens: int = 1000
-    model_config: Optional[Dict[str, Any]] = None
+    assistant_config: Optional[Dict[str, Any]] = None
     
     # Voice Configuration
     voice_provider: str = "elevenlabs"
@@ -42,7 +42,7 @@ class AssistantUpdate(BaseModel):
     model_name: Optional[str] = None
     model_temperature: Optional[float] = None
     model_max_tokens: Optional[int] = None
-    model_config: Optional[Dict[str, Any]] = None
+    assistant_config: Optional[Dict[str, Any]] = None
     voice_provider: Optional[str] = None
     voice_id: Optional[str] = None
     voice_settings: Optional[Dict[str, Any]] = None
@@ -66,7 +66,7 @@ class AssistantResponse(BaseModel):
     model_name: str
     model_temperature: float
     model_max_tokens: int
-    model_config: Optional[Dict[str, Any]] = None
+    assistant_config: Optional[Dict[str, Any]] = None
     voice_provider: str
     voice_id: Optional[str] = None
     voice_settings: Optional[Dict[str, Any]] = None

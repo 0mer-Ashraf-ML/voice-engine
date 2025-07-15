@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session, func
+from sqlalchemy.orm import Session
+from sqlalchemy import func
 from sqlalchemy import and_, extract
 from typing import Optional, List
 from datetime import datetime, date, timedelta

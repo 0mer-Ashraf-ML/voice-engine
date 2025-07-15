@@ -3,8 +3,9 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # Database
-    # DATABASE_URL: str = "postgresql://user:password@localhost/vapi_clone"
-    DATABASE_URL: str = "sqlite:///./vapi_voice.db"
+    DATABASE_URL: str = "postgresql://postgres:password@localhost:5433/voice_db"
+
+    # DATABASE_URL: str = "sqlite:///./vapi_voice.db"
     
     # Redis
     REDIS_URL: str = "redis://localhost:6379"

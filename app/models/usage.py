@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey, JSON, Float, Integer
-# from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.dialects.sqlite import UUID
+from sqlalchemy.dialects.postgresql import UUID
+# from sqlalchemy.dialects.sqlite import UUID
 from sqlalchemy.orm import relationship
 from app.database import Base
 import uuid
@@ -29,7 +29,7 @@ class UsageRecord(Base):
     model_name = Column(String(100), nullable=True)  # gpt-4, eleven_turbo_v2, nova-2
     
     # Metadata
-    metadata = Column(JSON, nullable=True)
+    meta_data = Column(JSON, nullable=True)
     
     # Billing
     billing_period = Column(String(10), nullable=False)  # YYYY-MM format

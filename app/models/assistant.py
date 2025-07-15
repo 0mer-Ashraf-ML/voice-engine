@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey, JSON, Text, Float, Integer
-# from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.dialects.sqlite import UUID
+from sqlalchemy.dialects.postgresql import UUID
+# from sqlalchemy.dialects.sqlite import UUID
 from sqlalchemy.orm import relationship
 from app.database import Base
 import uuid
@@ -21,7 +21,7 @@ class Assistant(Base):
     model_name = Column(String(100), default="gpt-4o")
     model_temperature = Column(Float, default=0.7)
     model_max_tokens = Column(Integer, default=1000)
-    model_config = Column(JSON, nullable=True)  # Additional model settings
+    assistant_config = Column(JSON, nullable=True)  # Additional model settings
     
     # Voice Configuration
     voice_provider = Column(String(50), default="elevenlabs")

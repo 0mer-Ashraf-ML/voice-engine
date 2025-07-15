@@ -1,0 +1,26 @@
+2025-07-15 14:49:50,898 - vapi_clone - INFO - logger.py:93 - API Request: GET /
+2025-07-15 14:49:50,900 - vapi_clone - INFO - logger.py:106 - API Response: GET / - 200 (0.002s)
+2025-07-15 14:49:51,007 - vapi_clone - INFO - logger.py:93 - API Request: GET /favicon.ico
+2025-07-15 14:49:51,008 - vapi_clone - INFO - logger.py:106 - API Response: GET /favicon.ico - 404 (0.001s)
+2025-07-15 14:50:33,377 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 14:50:33,378 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 404 (0.002s)
+2025-07-15 14:50:35,022 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 14:50:35,024 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 404 (0.002s)
+2025-07-15 14:50:44,533 - vapi_clone - INFO - logger.py:93 - API Request: GET /redocs
+2025-07-15 14:50:44,534 - vapi_clone - INFO - logger.py:106 - API Response: GET /redocs - 404 (0.001s)
+2025-07-15 14:51:42,596 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 14:51:42,597 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 404 (0.001s)
+2025-07-15 14:51:42,656 - vapi_clone - INFO - logger.py:93 - API Request: GET /favicon.ico
+2025-07-15 14:51:42,659 - vapi_clone - INFO - logger.py:106 - API Response: GET /favicon.ico - 404 (0.003s)
+2025-07-15 14:52:00,111 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 14:52:00,113 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 404 (0.002s)
+2025-07-15 14:52:01,482 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 14:52:01,484 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 404 (0.002s)
+2025-07-15 14:52:50,521 - vapi_clone - INFO - logger.py:93 - API Request: GET /
+2025-07-15 14:52:50,521 - vapi_clone - INFO - logger.py:106 - API Response: GET / - 200 (0.001s)
+2025-07-15 14:56:40,730 - vapi_clone - INFO - logger.py:93 - API Request: GET /
+2025-07-15 14:56:40,732 - vapi_clone - INFO - logger.py:106 - API Response: GET / - 200 (0.002s)
+2025-07-15 14:56:45,257 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 14:56:45,258 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.001s)
+2025-07-15 14:56:45,529 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 14:56:45,780 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.251s)
