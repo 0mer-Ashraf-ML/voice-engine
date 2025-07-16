@@ -1,10 +1,15 @@
-from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey, Enum
 from sqlalchemy.dialects.postgresql import UUID
-# from sqlalchemy.dialects.sqlite import UUID
 from sqlalchemy.orm import relationship
 from app.database import Base
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
+import enum
+
+class UserRole(enum.Enum):
+    SUPERADMIN = "superadmin"
+    ADMIN = "admin"
+    MEMBER = "member"
 
 class User(Base):
     __tablename__ = "users"
@@ -17,16 +22,38 @@ class User(Base):
     full_name = Column(String(255), nullable=False)
     
     is_active = Column(Boolean, default=True)
-    is_admin = Column(Boolean, default=False)
-    role = Column(String(50), default="member")  # admin, member, viewer
+    role = Column(Enum(UserRole), default=UserRole.MEMBER)  # ✅ Use String instead of Enum to avoid DB issues
     
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-    last_login = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # last_login = Column(DateTime, nullable=True)  # ✅ Uncommented and nullable
     
     # Relationships
     organization = relationship("Organization", back_populates="users")
     api_keys = relationship("ApiKey", back_populates="user", cascade="all, delete-orphan")
+    
+    @property
+    def is_admin(self) -> bool:
+        """Check if user is admin or superadmin"""
+        # return self.role in ["admin", "superadmin"]  # ✅ Use string values
+        return self.role in [UserRole.ADMIN.value, UserRole.SUPERADMIN.value]
+    
+    @property
+    def is_superadmin(self) -> bool:
+        """Check if user is superadmin"""
+        # return self.role == "superadmin"  # ✅ Use string value
+        return self.role == UserRole.SUPERADMIN.value
+    
+    def can_manage_user(self, target_user: 'User') -> bool:
+        """Check if current user can manage target user"""
+        if self.role == UserRole.SUPERADMIN.value:
+            return True  # SuperAdmin can manage everyone
+        
+        if self.role == UserRole.ADMIN.value:
+            # Admin can only manage members, not other admins/superadmins
+            return target_user.role == UserRole.MEMBER.value
+        
+        return False  # Members cannot manage anyone
 
 class ApiKey(Base):
     __tablename__ = "api_keys"
@@ -37,11 +64,11 @@ class ApiKey(Base):
     
     name = Column(String(255), nullable=False)
     key_hash = Column(String(255), unique=True, nullable=False)
-    key_prefix = Column(String(20), nullable=False)  # mindmeta_xxxxx
+    key_prefix = Column(String(20), nullable=False)
     
     is_active = Column(Boolean, default=True)
     last_used = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.utcnow)
     expires_at = Column(DateTime, nullable=True)
     
     # Relationships

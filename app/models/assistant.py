@@ -30,7 +30,7 @@ class Assistant(Base):
     
     # Transcriber Configuration
     transcriber_provider = Column(String(50), default="deepgram")
-    transcriber_model = Column(String(100), default="nova-2")
+    transcriber_model = Column(String(100), default="nova-3")
     transcriber_config = Column(JSON, nullable=True)
     
     # Settings

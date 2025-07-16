@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from app.database import get_db
-from app.auth import get_current_user, get_password_hash
-from app.models.user import User
-from app.schemas.auth import UserResponse, UserCreate
+from app.auth import get_current_user
+from app.models.user import User, UserRole
+from app.schemas.auth import UserResponse, UserCreate, UserUpdate
 from app.services.user_service import UserService
 import uuid
 
@@ -23,16 +23,16 @@ async def list_users(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Only admins can list users
-    if not current_user.is_admin:
+    # Check permissions
+    if current_user.role == UserRole.MEMBER:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions"
+            detail="Members cannot list users"
         )
     
     service = UserService(db)
     users = service.list_users(
-        organization_id=current_user.organization_id,
+        current_user=current_user,
         limit=limit,
         offset=offset,
         is_active=is_active,
@@ -46,23 +46,16 @@ async def create_user(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Only admins can create users
-    if not current_user.is_admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions"
-        )
-    
     service = UserService(db)
     user = service.create_user(
-        organization_id=current_user.organization_id,
+        current_user=current_user,
         user_data=user_data
     )
     
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already exists"
+            detail="Cannot create user. Either email exists or insufficient permissions."
         )
     
     return UserResponse.model_validate(user)
@@ -73,23 +66,16 @@ async def get_user(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Users can view their own profile, admins can view any user
-    if user_id != current_user.id and not current_user.is_admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions"
-        )
-    
     service = UserService(db)
     user = service.get_user(
         user_id=user_id,
-        organization_id=current_user.organization_id
+        current_user=current_user
     )
     
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            detail="User not found or insufficient permissions"
         )
     
     return UserResponse.model_validate(user)
@@ -97,28 +83,21 @@ async def get_user(
 @router.patch("/{user_id}", response_model=UserResponse)
 async def update_user(
     user_id: uuid.UUID,
-    user_data: dict,
+    user_data: UserUpdate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Users can update their own profile, admins can update any user
-    if user_id != current_user.id and not current_user.is_admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions"
-        )
-    
     service = UserService(db)
     user = service.update_user(
         user_id=user_id,
-        organization_id=current_user.organization_id,
+        current_user=current_user,
         user_data=user_data
     )
     
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            detail="User not found or insufficient permissions"
         )
     
     return UserResponse.model_validate(user)
@@ -129,30 +108,16 @@ async def delete_user(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Only admins can delete users
-    if not current_user.is_admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions"
-        )
-    
-    # Can't delete yourself
-    if user_id == current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot delete yourself"
-        )
-    
     service = UserService(db)
     success = service.delete_user(
         user_id=user_id,
-        organization_id=current_user.organization_id
+        current_user=current_user
     )
     
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            detail="User not found or insufficient permissions"
         )
     
     return {"message": "User deleted successfully"}

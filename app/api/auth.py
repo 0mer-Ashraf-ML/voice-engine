@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 from app.database import get_db
 from app.auth import verify_password, create_access_token, get_password_hash, generate_api_key, get_current_user
-from app.models.user import User, ApiKey
+from app.models.user import User, ApiKey, UserRole
 from app.models.organization import Organization
 from app.schemas.auth import UserLogin, UserCreate, UserResponse, TokenResponse, ApiKeyCreate, ApiKeyResponse
 from app.config import settings
@@ -23,14 +23,27 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
             detail="Email already registered"
         )
     
-    # Create organization
-    org_slug = user_data.organization_name.lower().replace(" ", "-").replace("_", "-")
-    organization = Organization(
-        name=user_data.organization_name,
-        slug=org_slug
-    )
-    db.add(organization)
-    db.flush()
+    # Create organization if provided
+    if user_data.organization_name:
+        org_slug = user_data.organization_name.lower().replace(" ", "-").replace("_", "-")
+        organization = Organization(
+            name=user_data.organization_name,
+            slug=org_slug
+        )
+        db.add(organization)
+        db.flush()
+        organization_id = organization.id
+        
+        # ✅ First user in new organization is always superadmin (string value)
+        # user_role = "superadmin"
+        # Assign role using enum value (lowercase)
+        user_role = UserRole.SUPERADMIN.value
+        
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Organization name required for registration"
+        )
     
     # Create user
     hashed_password = get_password_hash(user_data.password)
@@ -38,9 +51,9 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
         email=user_data.email,
         hashed_password=hashed_password,
         full_name=user_data.full_name,
-        organization_id=organization.id,
-        role=user_data.role,
-        is_admin=True if user_data.role == "admin" else False
+        organization_id=organization_id,
+        role=user_role,
+        # last_login=None
     )
     db.add(user)
     db.commit()
