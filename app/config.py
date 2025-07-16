@@ -3,7 +3,10 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "postgresql://postgres:password@localhost:5433/voice_db"
+    
+
+    # DATABASE_URL: str = "postgresql://postgres:password@localhost:5433/voice_db"
+    DATABASE_URL: str = "postgresql://voicebot:mindmeta123%40@voicebot.postgres.database.azure.com:5432/postgres?sslmode=require"
 
     # DATABASE_URL: str = "sqlite:///./vapi_voice.db"
     

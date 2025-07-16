@@ -11,3 +11,5 @@ test.py/
 /test.py/
 test.pyc
 *.pyc
+*.ipynb
+*.log

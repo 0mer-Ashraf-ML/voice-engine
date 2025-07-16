@@ -126,7 +126,7 @@ async def lifespan(app: FastAPI):
 #     openapi_url="/openapi.json" if settings.DEBUG else None,
 #     lifespan=lifespan
 # )
-app = FastAPI()
+app = FastAPI(title=settings.APP_NAME, version="1.0.0", lifespan=lifespan)
 
 # Add middleware
 app.add_middleware(

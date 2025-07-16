@@ -24,3 +24,206 @@
 2025-07-15 14:56:45,258 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.001s)
 2025-07-15 14:56:45,529 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
 2025-07-15 14:56:45,780 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.251s)
+2025-07-15 16:14:42,705 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 16:14:43,331 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/register - 200 (0.626s)
+2025-07-15 16:21:23,753 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/login
+2025-07-15 16:21:23,982 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/login - 200 (0.230s)
+2025-07-15 16:22:14,830 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 16:22:14,831 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Not authenticated
+2025-07-15 16:22:14,831 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 403 (0.001s)
+2025-07-15 16:22:46,033 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 16:22:46,044 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 200 (0.011s)
+2025-07-15 16:22:58,404 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 16:22:58,408 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 200 (0.003s)
+2025-07-15 16:31:10,786 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/api-keys
+2025-07-15 16:31:10,959 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/api-keys - 200 (0.173s)
+2025-07-15 16:31:40,399 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 16:31:40,404 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 200 (0.005s)
+2025-07-15 16:40:54,736 - vapi_clone - INFO - logger.py:93 - API Request: DELETE /api/v1/auth/api-keys/e77f6065-63fc-405f-a94b-f1683a182330
+2025-07-15 16:40:54,747 - vapi_clone - INFO - logger.py:106 - API Response: DELETE /api/v1/auth/api-keys/e77f6065-63fc-405f-a94b-f1683a182330 - 200 (0.012s)
+2025-07-15 16:41:01,238 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 16:41:01,241 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 200 (0.003s)
+2025-07-15 16:43:41,363 - vapi_clone - INFO - logger.py:93 - API Request: GET /health
+2025-07-15 16:43:41,365 - vapi_clone - INFO - logger.py:106 - API Response: GET /health - 200 (0.003s)
+2025-07-15 16:43:51,441 - vapi_clone - INFO - logger.py:93 - API Request: GET /
+2025-07-15 16:43:51,442 - vapi_clone - INFO - logger.py:106 - API Response: GET / - 200 (0.001s)
+2025-07-15 16:45:09,941 - vapi_clone - INFO - logger.py:93 - API Request: GET /metrics
+2025-07-15 16:45:09,942 - vapi_clone - INFO - logger.py:106 - API Response: GET /metrics - 200 (0.001s)
+2025-07-15 16:45:36,844 - vapi_clone - INFO - logger.py:93 - API Request: GET /admin/health
+2025-07-15 16:45:36,847 - vapi_clone - INFO - logger.py:106 - API Response: GET /admin/health - 200 (0.004s)
+2025-07-15 16:50:50,372 - vapi_clone - INFO - logger.py:93 - API Request: GET /redoc
+2025-07-15 16:50:50,373 - vapi_clone - INFO - logger.py:106 - API Response: GET /redoc - 200 (0.001s)
+2025-07-15 16:50:51,373 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 16:50:51,458 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.084s)
+2025-07-15 16:52:31,105 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 16:52:31,109 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.004s)
+2025-07-15 16:56:38,021 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/
+2025-07-15 16:56:38,071 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Invalid authentication credentials
+2025-07-15 16:56:38,072 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ - 401 (0.051s)
+2025-07-15 16:57:47,259 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/api-keys
+2025-07-15 16:57:47,262 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Invalid authentication credentials
+2025-07-15 16:57:47,263 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/api-keys - 401 (0.004s)
+2025-07-15 16:58:40,483 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/assistants/
+2025-07-15 16:58:40,486 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Invalid authentication credentials
+2025-07-15 16:58:40,486 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/assistants/ - 401 (0.004s)
+2025-07-15 16:59:10,578 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 16:59:10,578 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.001s)
+2025-07-15 16:59:10,967 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 16:59:11,145 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.178s)
+2025-07-15 16:59:36,581 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/login
+2025-07-15 16:59:36,924 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/login - 200 (0.343s)
+2025-07-15 17:00:04,379 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/api-keys
+2025-07-15 17:00:04,380 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Not authenticated
+2025-07-15 17:00:04,380 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/api-keys - 403 (0.002s)
+2025-07-15 17:00:32,919 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/api-keys
+2025-07-15 17:00:32,997 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/api-keys - 200 (0.078s)
+2025-07-15 17:00:52,782 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/
+2025-07-15 17:00:52,854 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ - 200 (0.072s)
+2025-07-15 17:01:47,598 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/assistants/
+2025-07-15 17:01:47,676 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/assistants/ - 201 (0.078s)
+2025-07-15 17:02:33,692 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/
+2025-07-15 17:02:33,696 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ - 200 (0.004s)
+2025-07-15 17:02:51,611 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/ada730a0-78f0-47fd-8afb-30ed456a59ee
+2025-07-15 17:02:51,615 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ada730a0-78f0-47fd-8afb-30ed456a59ee - 200 (0.005s)
+2025-07-15 17:05:36,576 - vapi_clone - INFO - logger.py:93 - API Request: PATCH /api/v1/assistants/ada730a0-78f0-47fd-8afb-30ed456a59ee
+2025-07-15 17:05:36,643 - vapi_clone - INFO - logger.py:106 - API Response: PATCH /api/v1/assistants/ada730a0-78f0-47fd-8afb-30ed456a59ee - 200 (0.067s)
+2025-07-15 17:06:23,713 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/ada730a0-78f0-47fd-8afb-30ed456a59ee
+2025-07-15 17:06:23,717 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ada730a0-78f0-47fd-8afb-30ed456a59ee - 200 (0.005s)
+2025-07-15 17:07:00,301 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/
+2025-07-15 17:07:00,307 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ - 200 (0.006s)
+2025-07-15 17:07:12,127 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/
+2025-07-15 17:07:12,134 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ - 200 (0.007s)
+2025-07-15 17:07:26,772 - vapi_clone - INFO - logger.py:93 - API Request: DELETE /api/v1/assistants/ada730a0-78f0-47fd-8afb-30ed456a59ee
+2025-07-15 17:07:26,864 - vapi_clone - INFO - logger.py:106 - API Response: DELETE /api/v1/assistants/ada730a0-78f0-47fd-8afb-30ed456a59ee - 200 (0.092s)
+2025-07-15 17:07:36,661 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/
+2025-07-15 17:07:36,666 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ - 200 (0.005s)
+2025-07-15 17:08:15,143 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/assistants/
+2025-07-15 17:08:15,211 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/assistants/ - 201 (0.069s)
+2025-07-15 17:08:48,813 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/assistants/db46c68c-ea4d-4e6f-bc6b-5066dbd9556b/tools
+2025-07-15 17:08:48,832 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/assistants/db46c68c-ea4d-4e6f-bc6b-5066dbd9556b/tools - 404 (0.019s)
+2025-07-15 17:18:32,495 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 17:18:32,498 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.004s)
+2025-07-15 17:18:33,346 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 17:18:33,605 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.259s)
+2025-07-15 17:19:16,308 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/login
+2025-07-15 17:19:56,646 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 17:20:47,064 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 17:30:11,334 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 17:31:22,081 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 17:31:22,083 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.002s)
+2025-07-15 17:31:22,572 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 17:31:22,883 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.312s)
+2025-07-15 17:31:31,908 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 17:38:15,080 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 17:38:15,082 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.002s)
+2025-07-15 17:38:15,309 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 17:38:15,578 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.269s)
+2025-07-15 17:38:44,622 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 17:49:53,054 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 17:49:53,057 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.003s)
+2025-07-15 17:49:53,731 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 17:49:53,963 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.232s)
+2025-07-15 17:50:12,044 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 17:57:52,508 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 17:57:52,509 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.001s)
+2025-07-15 17:57:52,847 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 17:57:53,073 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.226s)
+2025-07-15 17:58:02,419 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 18:01:34,050 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 18:01:34,051 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.002s)
+2025-07-15 18:01:34,413 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 18:01:34,620 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.207s)
+2025-07-15 18:01:43,638 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 18:03:56,410 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 18:03:56,412 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.002s)
+2025-07-15 18:03:56,729 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 18:03:56,942 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.213s)
+2025-07-15 18:04:05,651 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 18:08:21,509 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 19:10:22,671 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 19:10:22,674 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.003s)
+2025-07-15 19:10:23,004 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 19:10:23,239 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.235s)
+2025-07-15 19:10:32,848 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 19:21:05,169 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 19:21:05,170 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 404 (0.001s)
+2025-07-15 19:21:05,290 - vapi_clone - INFO - logger.py:93 - API Request: GET /favicon.ico
+2025-07-15 19:21:05,291 - vapi_clone - INFO - logger.py:106 - API Response: GET /favicon.ico - 404 (0.001s)
+2025-07-15 19:21:12,401 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 19:21:12,405 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 404 (0.004s)
+2025-07-15 19:21:13,785 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 19:21:13,789 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 404 (0.004s)
+2025-07-15 19:22:25,155 - vapi_clone - INFO - logger.py:93 - API Request: GET /docs
+2025-07-15 19:22:25,156 - vapi_clone - INFO - logger.py:106 - API Response: GET /docs - 200 (0.001s)
+2025-07-15 19:22:25,411 - vapi_clone - INFO - logger.py:93 - API Request: GET /openapi.json
+2025-07-15 19:22:25,707 - vapi_clone - INFO - logger.py:106 - API Response: GET /openapi.json - 200 (0.296s)
+2025-07-15 19:22:35,910 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/register
+2025-07-15 19:22:39,103 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/register - 200 (3.193s)
+2025-07-15 19:35:06,701 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/login
+2025-07-15 19:35:07,993 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/login - 200 (1.292s)
+2025-07-15 20:11:37,857 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 20:11:37,863 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Not authenticated
+2025-07-15 20:11:37,864 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 403 (0.007s)
+2025-07-15 20:12:53,728 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 20:12:54,727 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Invalid authentication credentials
+2025-07-15 20:12:54,728 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 401 (1.000s)
+2025-07-15 20:13:23,342 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 20:13:24,294 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Invalid authentication credentials
+2025-07-15 20:13:24,295 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 401 (0.953s)
+2025-07-15 20:14:34,879 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/api-keys
+2025-07-15 20:14:35,856 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Invalid authentication credentials
+2025-07-15 20:14:35,856 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/api-keys - 401 (0.977s)
+2025-07-15 20:14:49,071 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/login
+2025-07-15 20:14:50,476 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/login - 200 (1.405s)
+2025-07-15 20:15:15,874 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 20:15:17,115 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 200 (1.240s)
+2025-07-15 20:15:24,599 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/api-keys
+2025-07-15 20:15:27,085 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/api-keys - 200 (2.485s)
+2025-07-15 20:19:09,873 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/
+2025-07-15 20:19:11,171 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ - 200 (1.297s)
+2025-07-15 20:19:58,298 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/assistants/
+2025-07-15 20:20:01,041 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/assistants/ - 201 (2.742s)
+2025-07-15 20:20:16,730 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/
+2025-07-15 20:20:18,170 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/ - 200 (1.439s)
+2025-07-15 20:20:38,517 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/assistants/3855eac6-3afb-4a7f-8ff6-197bf09e1a4d
+2025-07-15 20:20:39,897 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/assistants/3855eac6-3afb-4a7f-8ff6-197bf09e1a4d - 200 (1.380s)
+2025-07-15 20:21:10,622 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/assistants/3855eac6-3afb-4a7f-8ff6-197bf09e1a4d/tools
+2025-07-15 20:21:12,488 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/assistants/3855eac6-3afb-4a7f-8ff6-197bf09e1a4d/tools - 404 (1.865s)
+2025-07-15 20:21:46,533 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/calls/
+2025-07-15 20:21:48,004 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/calls/ - 200 (1.471s)
+2025-07-15 20:35:53,276 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/phone-numbers/
+2025-07-15 20:35:54,863 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/phone-numbers/ - 200 (1.587s)
+2025-07-15 20:37:34,913 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/phone-numbers/
+2025-07-15 20:37:37,439 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/phone-numbers/ - 201 (2.525s)
+2025-07-15 20:39:09,808 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/phone-numbers/3015754e-74c9-4175-8ede-a9cfa9553c89
+2025-07-15 20:39:11,234 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/phone-numbers/3015754e-74c9-4175-8ede-a9cfa9553c89 - 200 (1.425s)
+2025-07-15 20:39:39,216 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/phone-numbers/purchase
+2025-07-15 20:39:40,418 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/phone-numbers/purchase - 400 (1.202s)
+2025-07-15 20:41:17,521 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/phone-numbers/purchase
+2025-07-15 20:41:18,498 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/phone-numbers/purchase - 400 (0.977s)
+2025-07-15 20:43:38,331 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/squads/
+2025-07-15 20:43:39,820 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/squads/ - 200 (1.488s)
+2025-07-15 20:44:17,219 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/squads/
+2025-07-15 20:44:19,617 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/squads/ - 201 (2.398s)
+2025-07-15 20:45:06,094 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/squads/110cd2a8-844e-42a2-a891-d05e46597c67
+2025-07-15 20:45:07,032 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Invalid authentication credentials
+2025-07-15 20:45:07,032 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/squads/110cd2a8-844e-42a2-a891-d05e46597c67 - 401 (0.938s)
+2025-07-15 20:45:21,731 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/auth/api-keys
+2025-07-15 20:45:22,701 - vapi_clone - WARNING - logger.py:231 - Auth Failure: unknown - Invalid authentication credentials
+2025-07-15 20:45:22,702 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/auth/api-keys - 401 (0.971s)
+2025-07-15 20:45:31,367 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/auth/login
+2025-07-15 20:45:32,623 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/auth/login - 200 (1.256s)
+2025-07-15 20:47:08,318 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/squads/110cd2a8-844e-42a2-a891-d05e46597c67
+2025-07-15 20:47:09,654 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/squads/110cd2a8-844e-42a2-a891-d05e46597c67 - 200 (1.336s)
+2025-07-15 20:50:25,422 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/squads/110cd2a8-844e-42a2-a891-d05e46597c67/assistants
+2025-07-15 20:50:27,240 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/squads/110cd2a8-844e-42a2-a891-d05e46597c67/assistants - 200 (1.818s)
+2025-07-15 20:50:46,384 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/squads/110cd2a8-844e-42a2-a891-d05e46597c67/assistants
+2025-07-15 20:50:48,231 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/squads/110cd2a8-844e-42a2-a891-d05e46597c67/assistants - 404 (1.847s)
+2025-07-15 20:51:54,021 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/users/me
+2025-07-15 20:51:55,185 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/users/me - 200 (1.164s)
+2025-07-15 20:52:32,349 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/users/
+2025-07-15 20:52:33,823 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/users/ - 200 (1.474s)
+2025-07-15 20:54:35,063 - vapi_clone - INFO - logger.py:93 - API Request: POST /api/v1/users/
+2025-07-15 20:54:38,434 - vapi_clone - INFO - logger.py:106 - API Response: POST /api/v1/users/ - 201 (3.371s)
+2025-07-15 20:55:07,074 - vapi_clone - INFO - logger.py:93 - API Request: GET /api/v1/users/3a5acdb6-72a8-42de-8390-a43e47037afa
+2025-07-15 20:55:08,513 - vapi_clone - INFO - logger.py:106 - API Response: GET /api/v1/users/3a5acdb6-72a8-42de-8390-a43e47037afa - 200 (1.439s)
