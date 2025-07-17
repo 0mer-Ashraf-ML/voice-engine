@@ -108,45 +108,6 @@ async def agent_voice_chat_page(agent_id: str, request: Request):
         "agent_id": agent_id
     })
 
-# API endpoint to get agent info
-@app.get("/api/agent/{agent_id}")
-async def get_agent_info(agent_id: str):
-    """Get agent configuration via API"""
-    agent_config = agent_loader.get_agent_config(agent_id)
-    if not agent_config:
-        raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
-    
-    return {
-        "id": agent_config.id,
-        "name": agent_config.name,
-        "description": agent_config.description,
-        "status": agent_config.status,
-        "llm_model": agent_config.llm_model,
-        "voice_provider": agent_config.tts_provider,
-        "voice_id": agent_config.voice_id,
-        "language": agent_config.language,
-        "tools": agent_config.tools
-    }
-
-# API endpoint to list all agents
-@app.get("/api/agents")
-async def list_agents():
-    """List all available agents"""
-    agents = agent_loader.get_all_agents()
-    return {
-        "agents": [
-            {
-                "id": config.id,
-                "name": config.name,
-                "description": config.description,
-                "status": config.status,
-                "llm_model": config.llm_model,
-                "voice_provider": config.tts_provider
-            }
-            for config in agents.values()
-        ]
-    }
-
 # Custom prompt generator for agents
 class AgentPromptGenerator:
     def __init__(self, agent_config):
