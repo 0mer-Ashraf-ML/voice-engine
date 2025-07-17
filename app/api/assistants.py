@@ -43,6 +43,7 @@ async def create_agent(
     service = AssistantService(db)
     result = service.create_agent(
         organization_id=current_user.organization_id,
+        user_id=current_user.id,  # ✅ Pass user_id from current_user
         agent_data=agent_data
     )
     

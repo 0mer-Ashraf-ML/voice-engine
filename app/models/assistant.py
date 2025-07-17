@@ -9,6 +9,7 @@ class Assistant(Base):
     __tablename__ = "assistants"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=False)
     
     # Basic Info
@@ -60,6 +61,7 @@ class Assistant(Base):
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
+    user = relationship("User", back_populates="assistants")
     organization = relationship("Organization", back_populates="assistants")
     calls = relationship("Call", back_populates="assistant")
     squad_assistants = relationship("SquadAssistant", back_populates="assistant")

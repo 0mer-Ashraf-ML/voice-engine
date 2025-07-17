@@ -30,6 +30,7 @@ class User(Base):
     
     # Relationships
     organization = relationship("Organization", back_populates="users")
+    assistants = relationship("Assistant", back_populates="user", cascade="all, delete-orphan")
     api_keys = relationship("ApiKey", back_populates="user", cascade="all, delete-orphan")
     
     @property

@@ -34,7 +34,7 @@ class AssistantService:
             "language": assistant.language,
             "prompt": assistant.system_prompt,
             "first_message": assistant.first_message,
-            "tools": assistant.get_tools(),  # ✅ Use the new tools field
+            "tools": assistant.get_tools(),
             "settings": {
                 "temperature": assistant.model_temperature,
                 "max_tokens": assistant.model_max_tokens,
@@ -47,7 +47,7 @@ class AssistantService:
             "created_at": assistant.created_at,
             "updated_at": assistant.updated_at
         }
-    
+
     def _agent_id_to_uuid(self, agent_id: str) -> Optional[uuid.UUID]:
         """Convert agent ID back to UUID"""
         try:
@@ -61,7 +61,7 @@ class AssistantService:
             return None
         except:
             return None
-    
+
     def list_agents(
         self, 
         organization_id: uuid.UUID, 
@@ -93,10 +93,11 @@ class AssistantService:
             "page": (offset // limit) + 1,
             "per_page": limit
         }
-    
+
     def create_agent(
         self, 
         organization_id: uuid.UUID, 
+        user_id: uuid.UUID,  # ✅ Add user_id parameter directly
         agent_data: AgentCreate
     ) -> Dict[str, Any]:
         """Create new assistant"""
@@ -106,6 +107,7 @@ class AssistantService:
         
         assistant = Assistant(
             organization_id=organization_id,
+            user_id=user_id,  # ✅ Set user_id directly
             name=agent_data.name,
             description=agent_data.description,
             first_message=agent_data.first_message,
@@ -124,7 +126,7 @@ class AssistantService:
             audio_channels=settings.audio_channels,
             interruptions_enabled=settings.interruptions_enabled,
             voicemail_detection=settings.voicemail_detection,
-            tools=agent_data.tools or []  # ✅ Set tools directly
+            tools=agent_data.tools or []
         )
         
         self.db.add(assistant)
@@ -132,7 +134,7 @@ class AssistantService:
         self.db.refresh(assistant)
         
         return {"agent": self._assistant_to_agent_format(assistant)}
-    
+
     def get_agent(
         self, 
         agent_id: str, 
@@ -153,7 +155,7 @@ class AssistantService:
             return None
         
         return {"agent": self._assistant_to_agent_format(assistant)}
-    
+
     def update_agent(
         self,
         agent_id: str,
@@ -200,7 +202,7 @@ class AssistantService:
         if agent_data.status is not None:
             assistant.is_active = agent_data.status == "active"
         
-        # ✅ Update tools directly
+        # Update tools directly
         if agent_data.tools is not None:
             assistant.set_tools(agent_data.tools)
         
@@ -220,7 +222,7 @@ class AssistantService:
         self.db.refresh(assistant)
         
         return {"agent": self._assistant_to_agent_format(assistant)}
-    
+
     def delete_agent(
         self, 
         agent_id: str, 
@@ -250,7 +252,7 @@ class AssistantService:
         self.db.commit()
         
         return True
-    
+
     def attach_tools(
         self,
         agent_id: str,
@@ -271,7 +273,7 @@ class AssistantService:
         if not assistant:
             return False
         
-        # ✅ Validate that tools exist in the organization
+        # Validate that tools exist in the organization
         existing_tools = self.db.query(Tool).filter(
             Tool.organization_id == organization_id,
             Tool.name.in_(tool_names),
@@ -280,7 +282,7 @@ class AssistantService:
         
         existing_tool_names = [tool.name for tool in existing_tools]
         
-        # ✅ Add tools directly to the JSON field
+        # Add tools directly to the JSON field
         current_tools = assistant.get_tools()
         
         for tool_name in existing_tool_names:
@@ -291,7 +293,7 @@ class AssistantService:
         self.db.commit()
         
         return True
-    
+
     def detach_tools(
         self,
         agent_id: str,
@@ -312,7 +314,7 @@ class AssistantService:
         if not assistant:
             return False
         
-        # ✅ Remove tools directly from the JSON field
+        # Remove tools directly from the JSON field
         for tool_name in tool_names:
             assistant.remove_tool(tool_name)
         
@@ -320,7 +322,7 @@ class AssistantService:
         self.db.commit()
         
         return True
-    
+
     def get_available_tools(
         self,
         organization_id: uuid.UUID
@@ -341,7 +343,7 @@ class AssistantService:
             }
             for tool in tools
         ]
-    
+
     def get_agent_tools_details(
         self,
         agent_id: str,
@@ -384,7 +386,7 @@ class AssistantService:
             }
             for tool in tools
         ]
-    
+
     def _normalize_model_name(self, model_name: str, provider: str) -> str:
         """Convert clean model name back to full name"""
         
