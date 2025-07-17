@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>{{agent.name}} - Voice Chat</title>
+    <script
+      src="https://cdn.socket.io/4.5.3/socket.io.min.js"
+      integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/public/style.css" />
+    <style>
+      .agent-info {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #47aca9;
+        color: white;
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        z-index: 1000;
+      }
+      
+      .agent-info h3 {
+        margin: 0 0 10px 0;
+        color: #13ef95;
+        font-size: 16px;
+      }
+      
+      .agent-info p {
+        margin: 5px 0;
+        opacity: 0.9;
+      }
+      
+      .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 5px;
+      }
+      
+      .status-active {
+        background-color: #13ef95;
+        box-shadow: 0 0 5px #13ef95;
+      }
+      
+      .status-inactive {
+        background-color: #ff4444;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Agent Information Panel -->
+    <div class="agent-info">
+      <h3>{{agent.name}}</h3>
+      <p><strong>Status:</strong> 
+        <span class="status-indicator status-{{agent.status}}"></span>
+        {{agent.status.title()}}
+      </p>
+      <p><strong>Model:</strong> {{agent.llm_model}}</p>
+      <p><strong>Voice:</strong> {{agent.voice_provider}}</p>
+      <p>{{agent.description}}</p>
+    </div>
+
+    <div class="content">
+      <div class="button-container">
+        <input type="checkbox" id="record" class="mic-checkbox" />
+        <label for="record" class="mic-button">
+          <div class="mic">
+            <div class="mic-button-loader"></div>
+            <div class="mic-base"></div>
+          </div>
+          <div class="button-message">
+            <span>&nbsp;</span>
+            <span> START </span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <h1>Chat with {{agent.name}}</h1>
+
+    <div id="chat_container" class="chat-container">
+      <div id="user-msg" class="chat right"></div>
+      <div id="llm-msg" class="chat left"></div>
+    </div>
+
+    <!-- Agent Configuration for JavaScript -->
+    <script>
+      window.AGENT_CONFIG = {
+        id: "{{agent.id}}",
+        name: "{{agent.name}}",
+        description: "{{agent.description}}",
+        status: "{{agent.status}}",
+        llm_model: "{{agent.llm_model}}",
+        voice_provider: "{{agent.voice_provider}}",
+        voice_id: "{{agent.voice_id}}",
+        language: "{{agent.language}}"
+      };
+    </script>
+    <script src="/public/agent_client.js"></script>
+  </body>
+</html>

@@ -19,7 +19,7 @@ tool_implementations = {
 }
 
 class LargeLanguageModel:
-    def __init__(self, guid, llm: LLM, dispatcher: Dispatcher,source: str = "device"):
+    def __init__(self, guid, llm: LLM, dispatcher: Dispatcher,source: str = "phone"):
         self.guid = guid
         self.llm = llm
         self.dispatcher = dispatcher

@@ -1,0 +1,92 @@
+{
+    "agents": {
+      "assistant-001": {
+        "id": "assistant-001",
+        "name": "General Assistant",
+        "description": "A helpful general-purpose AI assistant",
+        "status": "active",
+        "llm_provider": "openai",
+        "llm_model": "4o-mini",
+        "stt_provider": "deepgram",
+        "stt_model": "nova-2-general",
+        "tts_provider": "deepgram",
+        "voice_id": "21m00Tcm4TlvDq8ikWAM",
+        "language": "english",
+        "prompt": "You are a helpful AI assistant. You communicate through voice, so keep your responses conversational, clear, and concise. Guidelines: Keep responses short and natural since they'll be spoken aloud, be helpful and friendly, avoid long explanations unless specifically asked, respond in a conversational tone.",
+        "tools": [],
+        "settings": {
+          "temperature": 0.3,
+          "max_tokens": 150,
+          "conversation_timeout": 30.0,
+          "audio_sample_rate": 16000,
+          "audio_channels": 1
+        }
+      },
+      "food-expert": {
+        "id": "food-expert",
+        "name": "Food & Restaurant Expert",
+        "description": "Specialized assistant for food recommendations and restaurant suggestions",
+        "status": "active",
+        "llm_provider": "openai",
+        "llm_model": "4o",
+        "stt_provider": "deepgram",
+        "stt_model": "nova-2-general",
+        "tts_provider": "deepgram",
+        "voice_id": "EXAVITQu4vr4xnSDxMaL",
+        "language": "english",
+        "prompt": "You are a food and restaurant expert. You help users find great restaurants, suggest meals, and provide food recommendations. Keep your responses conversational and enthusiastic about food. Always ask follow-up questions to better understand their preferences like cuisine type, dietary restrictions, budget, and location.",
+        "tools": ["restaurant_search", "menu_lookup"],
+        "settings": {
+          "temperature": 0.4,
+          "max_tokens": 200,
+          "conversation_timeout": 45.0,
+          "audio_sample_rate": 16000,
+          "audio_channels": 1
+        }
+      },
+      "tech-support": {
+        "id": "tech-support",
+        "name": "Technical Support",
+        "description": "Technical support specialist for troubleshooting and guidance",
+        "status": "active",
+        "llm_provider": "openai",
+        "llm_model": "4o",
+        "stt_provider": "deepgram",
+        "stt_model": "nova-2-general",
+        "tts_provider": "deepgram",
+        "voice_id": "pNInz6obpgDQGcFmaJgB",
+        "language": "english",
+        "prompt": "You are a technical support specialist. Help users troubleshoot technical issues with clear, step-by-step instructions. Be patient and ask clarifying questions to understand the problem better. Speak in simple terms and avoid technical jargon unless necessary.",
+        "tools": ["system_check", "diagnostic_run"],
+        "settings": {
+          "temperature": 0.2,
+          "max_tokens": 300,
+          "conversation_timeout": 60.0,
+          "audio_sample_rate": 16000,
+          "audio_channels": 1
+        }
+      },
+      "sales-demo": {
+        "id": "sales-demo",
+        "name": "Sales Demo Assistant",
+        "description": "Sales demonstration and product showcase assistant",
+        "status": "active",
+        "llm_provider": "openai",
+        "llm_model": "4o-mini",
+        "stt_provider": "deepgram",
+        "stt_model": "nova-2-general",
+        "tts_provider": "deepgram",
+        "voice_id": "aura-asteria-en",
+        "language": "english",
+        "prompt": "You are a sales demonstration assistant. You're enthusiastic, professional, and skilled at showcasing product features and benefits. Keep your responses engaging and persuasive while being helpful. Ask good qualifying questions to understand customer needs.",
+        "tools": ["product_demo", "pricing_lookup"],
+        "settings": {
+          "temperature": 0.5,
+          "max_tokens": 250,
+          "conversation_timeout": 120.0,
+          "audio_sample_rate": 16000,
+          "audio_channels": 1
+        }
+      }
+    }
+  }

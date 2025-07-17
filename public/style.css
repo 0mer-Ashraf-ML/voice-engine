@@ -331,3 +331,49 @@ h1 {
 
 
 
+/* Agent Header Styles */
+.agent-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(90deg, #201cff -91.5%, #13ef95 120.05%);
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.agent-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.agent-description {
+  margin: 10px 0;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.agent-status {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.status-active {
+  background-color: #13ef95;
+  color: #000;
+}
+
+.status-inactive {
+  background-color: #ff4444;
+  color: #fff;
+}
+
+.status-maintenance {
+  background-color: #ffaa00;
+  color: #000;
+}

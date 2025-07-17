@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Available Voice Agents</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/public/style.css" />
+    <style>
+        .agents-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .agent-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #47aca9;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .agent-card:hover {
+            border-color: #13ef95;
+            box-shadow: 0 0 20px rgba(19, 239, 149, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .agent-card h3 {
+            color: #13ef95;
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+        
+        .agent-card p {
+            margin: 10px 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .agent-status {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background-color: #13ef95;
+            box-shadow: 0 0 8px #13ef95;
+        }
+        
+        .status-inactive {
+            background-color: #ff4444;
+        }
+        
+        .agent-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .agent-details span {
+            background: rgba(71, 172, 169, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-right: 5px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-header h1 {
+            color: #13ef95;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #ccc;
+            font-size: 16px;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #47aca9;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #13ef95;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+    
+    <div class="agents-container">
+        <div class="page-header">
+            <h1>Available Voice Agents</h1>
+            <p>Choose an agent to start a voice conversation</p>
+        </div>
+        
+        <div class="agents-grid">
+            {% for agent in agents %}
+            <a href="/agent/{{ agent.id }}" class="agent-card">
+                <h3>{{ agent.name }}</h3>
+                <p>{{ agent.description }}</p>
+                
+                <div class="agent-status">
+                    <span class="status-dot status-{{ agent.status }}"></span>
+                    <span>{{ agent.status.title() }}</span>
+                </div>
+                
+                <div class="agent-details">
+                    <div>
+                        <span>{{ agent.llm_model }}</span>
+                        <span>{{ agent.voice_provider }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
