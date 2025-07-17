@@ -2,10 +2,12 @@
 import os , uuid , asyncio
 from dotenv import load_dotenv
 from api_request_schemas import (SourceEnum , LanguageEnum)
-from fastapi import FastAPI, WebSocket , Request, HTTPException
+from fastapi import FastAPI, WebSocket , Request, HTTPException, Depends
 from fastapi.websockets import WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
+
 # internal imports
 from lib_socket_handler.web_socket_manager import WebsocketManager
 from lib_stt.speech_to_text_deepgram import SpeechToTextDeepgram
@@ -18,19 +20,38 @@ from lib_infrastructure.dispatcher import ( Dispatcher , Message , MessageHeader
 from lib_infrastructure.helpers.global_event_logger import GlobalLoggerAsync
 from lib_agents.agent_loader import AgentLoader
 
+from app.database import get_db
+from app.models.user import User
+from app.auth import get_current_user
+from sqlalchemy.orm import Session
+from app.config import settings
+
 # loading .env configs
 load_dotenv()
-PORT = int(os.getenv("PORT"))
+# PORT = int(os.getenv("PORT"))
+PORT = 3000
 OUTPUT_MP3_FILES = "output.mp3"
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY")
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY")
+# ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+
+OPENAI_API_KEY = settings.OPENAI_API_KEY
+DEEPGRAM_API_KEY = settings.DEEPGRAM_API_KEY
+ELEVENLABS_API_KEY = settings.ELEVENLABS_API_KEY
 
 # Initialize agent loader
-agent_loader = AgentLoader()
+# agent_loader = AgentLoader()
 
 # app initalization & setup
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins (use cautiously in production)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.mount("/public", StaticFiles(directory="public"), name="static")
 templates = Jinja2Templates(directory="templates")
 dispatcher = Dispatcher()
@@ -55,10 +76,19 @@ async def get(request: Request):
     return templates.TemplateResponse("index.html" ,  {"request": request})
 
 # Agents listing page
-@app.get("/agents")
-async def list_agents_page(request: Request):
-    """Display all available agents"""
-    agents = agent_loader.get_all_agents()
+@app.get("/agents/{user_id}")
+async def list_agents_page(
+    user_id: str,  # Extract user_id from the URL
+    request: Request,
+    current_user: User = Depends(get_current_user),  # Get authenticated user
+    db: Session = Depends(get_db)
+):
+    # Ensure the requested user_id matches the authenticated user's ID
+    if str(current_user.id) != user_id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    agent_loader = AgentLoader(db)
+    agents = agent_loader.get_all_agents(current_user.organization_id)
     agents_list = [
         {
             "id": config.id,
@@ -72,6 +102,10 @@ async def list_agents_page(request: Request):
         }
         for config in agents.values()
     ]
+
+    # Check if the request accepts JSON
+    # if request.headers.get("accept") == "application/json":
+    #     return {"agents": agents_list}
     
     return templates.TemplateResponse("agents_list.html", {
         "request": request,
@@ -80,17 +114,19 @@ async def list_agents_page(request: Request):
 
 # New agent-specific route
 @app.get("/agent/{agent_id}")
-async def agent_voice_chat_page(agent_id: str, request: Request):
-    """Serve voice chat page for specific agent"""
-    # Get agent configuration
-    agent_config = agent_loader.get_agent_config(agent_id)
+async def agent_voice_chat_page(
+    agent_id: str,
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    agent_loader = AgentLoader(db)
+    agent_config = agent_loader.get_agent_config(agent_id, current_user.organization_id)
     if not agent_config:
         raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
-    
     if agent_config.status != "active":
         raise HTTPException(status_code=403, detail=f"Agent '{agent_id}' is not active")
     
-    # Agent configuration for the frontend
     agent_data = {
         "id": agent_config.id,
         "name": agent_config.name,
@@ -101,6 +137,10 @@ async def agent_voice_chat_page(agent_id: str, request: Request):
         "voice_id": agent_config.voice_id,
         "language": agent_config.language
     }
+
+    # Check if the request accepts JSON
+    # if request.headers.get("accept") == "application/json":
+    #     return agent_data
     
     return templates.TemplateResponse("agent_chat.html", {
         "request": request,
@@ -110,9 +150,13 @@ async def agent_voice_chat_page(agent_id: str, request: Request):
 
 # API endpoint to get agent info
 @app.get("/api/agent/{agent_id}")
-async def get_agent_info(agent_id: str):
-    """Get agent configuration via API"""
-    agent_config = agent_loader.get_agent_config(agent_id)
+async def get_agent_info(
+    agent_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    agent_loader = AgentLoader(db)
+    agent_config = agent_loader.get_agent_config(agent_id, current_user.organization_id)
     if not agent_config:
         raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
     
@@ -130,9 +174,13 @@ async def get_agent_info(agent_id: str):
 
 # API endpoint to list all agents
 @app.get("/api/agents")
-async def list_agents():
-    """List all available agents"""
-    agents = agent_loader.get_all_agents()
+async def list_agents(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    agent_loader = AgentLoader(db)
+    agents = agent_loader.get_all_agents(current_user.organization_id)
+    
     return {
         "agents": [
             {
@@ -177,49 +225,107 @@ async def chat_invoke(websocket: WebSocket):
                 print(llm_resp)
                 await websocket.send_json(llm_resp)
     except Exception as e:
-        print(f"Client disconnected >>> {e}")
+        print(f"Client disconnected >>> {e}")   
 
 # Original websocket endpoint (for backward compatibility)
 @app.websocket("/ws/{source}")
 async def websocket_endpoint(
     websocket: WebSocket,
-    source: SourceEnum,
-    language: LanguageEnum | None = None 
+    source: str,
+    user_id: str = "fa1c8ec9-67bc-495c-8526-f96fc2a5e3e0",
+    agent_id: str = "assistant-ec87d3fbe4d9",
+    language: str | None = None,
+    db: Session = Depends(get_db)
 ):
-    # Default to assistant-001 for backward compatibility
-    await websocket_agent_endpoint(websocket, source, "assistant-001", language)
+    print("From WEBSOCKET_ENDPOINT >>>> `/ws/source`")
+    print(f"WebSocket connection established from {source} with user_id: {user_id} and agent_id: {agent_id}")
+    user = None
+    if user_id:
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            await websocket.close(code=4404, reason="User not found")
+            return
+
+    await handle_websocket(
+        websocket=websocket,
+        source=source,
+        agent_id=agent_id,
+        language=language,
+        current_user=user,
+        db=db
+    )
+
 
 # New agent-specific websocket endpoint - matches your JS URL structure
 @app.websocket("/ws/{source}/agent/{agent_id}")
 async def websocket_agent_endpoint(
     websocket: WebSocket,
     source: SourceEnum,
-    agent_id: str,
-    language: LanguageEnum | None = None
+    agent_id: str = "assistant-ec87d3fbe4d9",
+    user_id: str = "fa1c8ec9-67bc-495c-8526-f96fc2a5e3e0",
+    language: LanguageEnum | None = None,
+    db: Session = Depends(get_db)
 ):
-    guid = str(uuid.uuid4())
     
-    # Get agent configuration
-    agent_config = agent_loader.get_agent_config(agent_id)
-    if not agent_config:
-        await websocket.close(code=4404, reason=f"Agent '{agent_id}' not found")
+    print("From WEBSOCKET_ENDPOINT >>>> `/ws/source/agent/agent_id`")
+    print(f"WebSocket connection established from {source} with user_id: {user_id} and agent_id: {agent_id}")
+    
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    print(f"User fetched: {user}")
+    if not user:
+        await websocket.close(code=4404, reason="User not found")
         return
+
+    # From the client side, connect like this:
+    # const ws = new WebSocket("ws://localhost:3000/ws/phone/agent/assistant-ec87d3fbe4d9?user_id=fa1c8ec9-67bc-495c-8526-f96fc2a5e3e0&language=english");
+
     
+    await handle_websocket(
+        websocket,
+        source,
+        agent_id,
+        language,
+        user,  # Pass the user object (or None)
+        db
+    )
+
+# Update the handle_websocket function to handle optional user
+async def handle_websocket(
+    websocket: WebSocket,
+    source: SourceEnum,
+    agent_id: str,
+    language: LanguageEnum | None,
+    current_user: User | None,  # Optional user object
+    db: Session
+):
+    agent_loader = AgentLoader(db)
+
+    # Use user's organization_id if user exists, else fallback to 1
+    org_id = current_user.organization_id if current_user else 1
+
+    # Load agent config using org_id
+    agent_config = agent_loader.get_agent_config(agent_id, org_id)
+
+    if not agent_config:
+        await websocket.close(code=4404, reason=f"Agent '{agent_id}' not found in organization {org_id}")
+        return
+
     if agent_config.status != "active":
         await websocket.close(code=4403, reason=f"Agent '{agent_id}' is not active")
         return
-    
-    # Override language if specified in agent config
-    if language is None:
-        language = LanguageEnum(agent_config.language)
-    
-    print(f"WebSocket connection established for agent '{agent_id}' via {source.value} with UID {guid} & language {language.value}")
 
-    # Use agent-specific prompt generator
+    # Proceed with initializing services (LLM, TTS, STT, etc.)
+    guid = str(uuid.uuid4())
+    language = language or LanguageEnum(agent_config.language)
     prompt_generator = AgentPromptGenerator(agent_config)
-    
-    # Initialize LLM with agent-specific model
-    modelInstance = LLM(guid, prompt_generator, OPENAI_API_KEY, model=agent_config.llm_model)
+
+    modelInstance = LLM(
+        guid,
+        prompt_generator,
+        OPENAI_API_KEY,
+        model=agent_config.llm_model
+    )
 
     global_logger = GlobalLoggerAsync(
         guid,
@@ -228,36 +334,60 @@ async def websocket_agent_endpoint(
             MessageType.CALL_WEBSOCKET_PUT: True,
             MessageType.LLM_GENERATED_TEXT: True,
             MessageType.TRANSCRIPTION_CREATED: True,
-            MessageType.FINAL_TRANSCRIPTION_CREATED : True,
-            MessageType.LLM_GENERATED_FULL_TEXT : True,
-            MessageType.CALL_WEBSOCKET_GET : False
+            MessageType.FINAL_TRANSCRIPTION_CREATED: True,
+            MessageType.LLM_GENERATED_FULL_TEXT: True,
+            MessageType.CALL_WEBSOCKET_GET: False
         },
-        # events whose output needs to be ignored, we just need to capture the time they are fired
-        ignore_msg_events = {  
+        ignore_msg_events={
             MessageType.CALL_WEBSOCKET_PUT: True,
-            MessageType.CALL_WEBSOCKET_GET : True
+            MessageType.CALL_WEBSOCKET_GET: True
         }
     )
 
-    websocket_manager = WebsocketManager(guid, modelInstance, dispatcher, websocket, source)
-    speech_to_text = SpeechToTextDeepgram(guid, dispatcher, websocket, DEEPGRAM_API_KEY)
-    large_language_model = LargeLanguageModel(guid, modelInstance, dispatcher, source.value)
-    
-    # Choose TTS provider based on agent configuration
+    websocket_manager = WebsocketManager(
+        guid,
+        modelInstance,
+        dispatcher,
+        websocket,
+        source
+    )
+
+    speech_to_text = SpeechToTextDeepgram(
+        guid,
+        dispatcher,
+        websocket,
+        DEEPGRAM_API_KEY
+    )
+
+    large_language_model = LargeLanguageModel(
+        guid,
+        modelInstance,
+        dispatcher,
+        source.value
+    )
+
     if agent_config.tts_provider == "elevenlabs":
-        text_to_speech = TextToSpeechElevenLabs(guid, dispatcher, ELEVENLABS_API_KEY, agent_config.voice_id)
-    else:  # Default to deepgram
-        text_to_speech = TextToSpeechDeepgram(guid, dispatcher, DEEPGRAM_API_KEY)
+        text_to_speech = TextToSpeechElevenLabs(
+            guid,
+            dispatcher,
+            ELEVENLABS_API_KEY,
+            agent_config.voice_id
+        )
+    else:
+        text_to_speech = TextToSpeechDeepgram(
+            guid,
+            dispatcher,
+            DEEPGRAM_API_KEY
+        )
 
     try:
         tasks = [
             asyncio.create_task(global_logger.run_async()),
             asyncio.create_task(speech_to_text.run_async()),
             asyncio.create_task(large_language_model.run_async()),
-            asyncio.create_task(text_to_speech.run_async()),            
+            asyncio.create_task(text_to_speech.run_async()),
             asyncio.create_task(websocket_manager.run_async()),
         ]
-
         await asyncio.gather(*tasks)
     except asyncio.CancelledError:
         await websocket_manager.dispose()
@@ -266,7 +396,8 @@ async def websocket_agent_endpoint(
         raise e
     finally:
         await dispatcher.broadcast(
-            guid, Message(MessageHeader(MessageType.CALL_ENDED), "Call ended") 
+            guid,
+            Message(MessageHeader(MessageType.CALL_ENDED), "Call ended")
         )
 
 if __name__ == "__main__":
