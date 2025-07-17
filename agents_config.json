@@ -9,7 +9,7 @@
         "llm_model": "4o-mini",
         "stt_provider": "deepgram",
         "stt_model": "nova-2-general",
-        "tts_provider": "deepgram",
+        "tts_provider": "elevenlabs",
         "voice_id": "21m00Tcm4TlvDq8ikWAM",
         "language": "english",
         "prompt": "You are a helpful AI assistant. You communicate through voice, so keep your responses conversational, clear, and concise. Guidelines: Keep responses short and natural since they'll be spoken aloud, be helpful and friendly, avoid long explanations unless specifically asked, respond in a conversational tone.",
