@@ -73,7 +73,7 @@ class UserService:
             email=user_data.email,
             hashed_password=hashed_password,
             full_name=user_data.full_name,
-            role=user_data.role
+            role=user_data.role.lower()
         )
         
         self.db.add(user)
@@ -175,9 +175,9 @@ class UserService:
         
         # Soft delete - just deactivate
         target_user.is_active = False
-        target_user.updated_at = datetime.utcnow()
-        
+        self.db.delete(target_user)
         self.db.commit()
+        
         return True
     
     def create_superadmin(
@@ -200,7 +200,7 @@ class UserService:
             email=user_data.email,
             hashed_password=hashed_password,
             full_name=user_data.full_name,
-            role=UserRole.SUPERADMIN
+            role=UserRole.SUPERADMIN.value.lower()
         )
         
         self.db.add(user)

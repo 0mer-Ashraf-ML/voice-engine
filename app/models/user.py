@@ -22,7 +22,7 @@ class User(Base):
     full_name = Column(String(255), nullable=False)
     
     is_active = Column(Boolean, default=True)
-    role = Column(Enum(UserRole), default=UserRole.MEMBER)  # ✅ Use String instead of Enum to avoid DB issues
+    role = Column(String(20), default=UserRole.MEMBER.value)  # ✅ Use String instead of Enum to avoid DB issues
     
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

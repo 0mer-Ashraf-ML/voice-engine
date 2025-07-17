@@ -36,7 +36,7 @@ async def list_users(
         limit=limit,
         offset=offset,
         is_active=is_active,
-        role=role
+        role=role.lower()
     )
     return [UserResponse.model_validate(user) for user in users]
 

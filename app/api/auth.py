@@ -52,7 +52,7 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
         hashed_password=hashed_password,
         full_name=user_data.full_name,
         organization_id=organization_id,
-        role=user_role,
+        role=user_role.lower()
         # last_login=None
     )
     db.add(user)

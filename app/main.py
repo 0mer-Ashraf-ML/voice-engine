@@ -26,6 +26,8 @@ from app.websocket import manager
 # Initialize logger
 logger = get_logger(__name__)
 
+Base.metadata.create_all(bind=engine)
+
 # Custom middleware for request logging and timing
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
@@ -92,29 +94,29 @@ class UserContextMiddleware(BaseHTTPMiddleware):
         
         return await call_next(request)
 
-# Database startup/shutdown
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup
-    logger.info("Starting up Vapi Clone application...")
+# # Database startup/shutdown
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     # Startup
+#     logger.info("Starting up Vapi Clone application...")
     
-    # Create database tables
-    try:
-        Base.metadata.create_all(bind=engine)
-        logger.info("Database tables created successfully")
-    except Exception as e:
-        logger.error(f"Failed to create database tables: {e}")
-        raise
+#     # Create database tables
+#     try:
+#         Base.metadata.create_all(bind=engine)
+#         logger.info("Database tables created successfully")
+#     except Exception as e:
+#         logger.error(f"Failed to create database tables: {e}")
+#         raise
     
-    # Additional startup tasks
-    logger.info("Application startup completed")
+#     # Additional startup tasks
+#     logger.info("Application startup completed")
     
-    yield
+#     yield
     
-    # Shutdown
-    logger.info("Shutting down Vapi Clone application...")
-    # Cleanup tasks would go here
-    logger.info("Application shutdown completed")
+#     # Shutdown
+#     logger.info("Shutting down Vapi Clone application...")
+#     # Cleanup tasks would go here
+#     logger.info("Application shutdown completed")
 
 # Create FastAPI application
 # app = FastAPI(
@@ -126,7 +128,7 @@ async def lifespan(app: FastAPI):
 #     openapi_url="/openapi.json" if settings.DEBUG else None,
 #     lifespan=lifespan
 # )
-app = FastAPI(title=settings.APP_NAME, version="1.0.0", lifespan=lifespan)
+app = FastAPI(title=settings.APP_NAME, version="1.0.0")
 
 # Add middleware
 app.add_middleware(

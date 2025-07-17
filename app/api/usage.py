@@ -99,7 +99,7 @@ async def create_usage_record(
 
 @router.get("/export")
 async def export_usage_data(
-    format: str = Query("csv", regex="^(csv|json|xlsx)$"),
+    format: str = Query("csv", pattern="^(csv|json|xlsx)$"),
     billing_period: Optional[str] = Query(None),
     start_date: Optional[date] = Query(None),
     end_date: Optional[date] = Query(None),
