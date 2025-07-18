@@ -71,9 +71,43 @@ class AssistantService:
     ) -> Dict[str, Any]:
         """List assistants in clean agent format"""
         
+        # query = self.db.query(Assistant).filter(
+        #     Assistant.organization_id == organization_id
+        # )
+        query = self.db.query(Assistant)
+        
+        if status:
+            is_active = status == "active"
+            query = query.filter(Assistant.is_active == is_active)
+        
+        total = query.count()
+        assistants = query.order_by(Assistant.created_at.desc()).offset(offset).limit(limit).all()
+        
+        agents_dict = {}
+        for assistant in assistants:
+            agent_data = self._assistant_to_agent_format(assistant)
+            agents_dict[agent_data["id"]] = agent_data
+        
+        return {
+            "agents": agents_dict,
+            "total": total,
+            "page": (offset // limit) + 1,
+            "per_page": limit
+        }
+        
+    def list_agents_by_user_id(
+        self, 
+        user_id: uuid.UUID, 
+        limit: int = 100, 
+        offset: int = 0,
+        status: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """List assistants in clean agent format"""
+        
         query = self.db.query(Assistant).filter(
-            Assistant.organization_id == organization_id
+            Assistant.user_id == user_id
         )
+        # query = self.db.query(Assistant)
         
         if status:
             is_active = status == "active"
@@ -148,7 +182,7 @@ class AssistantService:
         
         assistant = self.db.query(Assistant).filter(
             Assistant.id == uuid_id,
-            Assistant.organization_id == organization_id
+            # Assistant.organization_id == organization_id
         ).first()
         
         if not assistant:
