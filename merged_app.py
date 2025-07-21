@@ -51,7 +51,7 @@ from app.websocket import manager
 load_dotenv()
 
 # Configuration
-PORT = 8008  # Single port for both applications
+PORT = settings.PORT  # Single port for both applications
 OUTPUT_MP3_FILES = "output.mp3"
 
 # API Keys from settings

@@ -3,13 +3,13 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "postgresql://voicebot:mindmeta123%40@voicebot.postgres.database.azure.com:5432/postgres?sslmode=require"
+    DATABASE_URL: str
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379"
 
     # JWT Settings
-    SECRET_KEY: str = "your-secret-key-change-in-production"
+    SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
