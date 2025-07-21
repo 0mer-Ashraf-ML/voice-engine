@@ -53,7 +53,8 @@ class AgentLoader:
             language=agent_data["language"],
             prompt=agent_data["prompt"],
             tools=agent_data["tools"],
-            settings=agent_data["settings"]
+            settings=agent_data["settings"],
+            # user_id=agent_data.get("user_id", None)
         )
 
     def get_all_agents(self) -> Dict[str, AgentConfig]:
@@ -78,7 +79,33 @@ class AgentLoader:
                 language=agent["language"],
                 prompt=agent["prompt"],
                 tools=agent["tools"],
-                settings=agent["settings"]
+                settings=agent["settings"],
+            )
+            for agent_id, agent in agents_dict.items()
+        }
+        
+    def get_agent_by_user_id(self, user_id: uuid.UUID) -> Dict[str, AgentConfig]:
+        """List all agents for the organization"""
+        service = AssistantService(self.db)
+        agents_result = service.list_agents_by_user_id(user_id, limit=1000)
+        agents_dict = agents_result["agents"]
+        return {
+            agent_id: AgentConfig(
+                id=agent["id"],
+                name=agent["name"],
+                description=agent["description"],
+                status=agent["status"],
+                llm_provider=agent["llm_provider"],
+                llm_model=agent["llm_model"],
+                stt_provider=agent["stt_provider"],
+                stt_model=agent["stt_model"],
+                tts_provider=agent["tts_provider"],
+                voice_id=agent["voice_id"],
+                language=agent["language"],
+                prompt=agent["prompt"],
+                tools=agent["tools"],
+                settings=agent["settings"],
+                
             )
             for agent_id, agent in agents_dict.items()
         }

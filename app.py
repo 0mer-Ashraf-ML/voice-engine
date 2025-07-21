@@ -494,10 +494,11 @@ async def list_agents_page(
     db: Session = Depends(get_db)
 ):
     agent_loader = AgentLoader(db)
-    
-    # Load all agents without organization filtering
-    agents = agent_loader.get_all_agents()
-
+    # Using a default organization_id of 1 since we're removing auth
+    agents = agent_loader.get_agent_by_user_id(user_id=user_id)
+    print(f"Agents fetched for user {user_id}: {agents}")
+    print(f"Total agents found: {len(agents)}")
+    print(f"Agents data: {agents.values()}")
     agents_list = [
         {
             "id": config.id,
@@ -511,18 +512,13 @@ async def list_agents_page(
         }
         for config in agents.values()
     ]
-
-    # Return JSON if requested
-    if request.headers.get("accept") == "application/json":
-        return {"agents": agents_list}
-
-    # Otherwise, render HTML template
+    
     return templates.TemplateResponse("agents_list.html", {
         "request": request,
         "agents": agents_list
     })
 
-# Agent-specific route without authentication
+# Agent-specific route
 @app.get("/agent/{agent_id}")
 async def agent_voice_chat_page(
     agent_id: str,
@@ -530,9 +526,14 @@ async def agent_voice_chat_page(
     db: Session = Depends(get_db)
 ):
     agent_loader = AgentLoader(db)
-    agent_config = agent_loader.get_agent_config(agent_id)
+    # Using default organization_id of 1
+    agent_config = agent_loader.get_agent_config(agent_id, organization_id='e19eaf1c-924b-4c1f-b0df-9d09d296cacb')
     if not agent_config:
         raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
+    
+    # Convert boolean status to string
+    agent_config.status = "active" if agent_config.status else "inactive"
+
     if agent_config.status != "active":
         raise HTTPException(status_code=403, detail=f"Agent '{agent_id}' is not active")
     
@@ -553,36 +554,15 @@ async def agent_voice_chat_page(
         "agent_id": agent_id
     })
 
-# API endpoint to get agent info without authentication
-@app.get("/api/agent/{agent_id}")
-async def get_agent_info(
-    agent_id: str,
-    db: Session = Depends(get_db)
-):
-    agent_loader = AgentLoader(db)
-    agent_config = agent_loader.get_agent_config(agent_id)
-    if not agent_config:
-        raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
-    
-    return {
-        "id": agent_config.id,
-        "name": agent_config.name,
-        "description": agent_config.description,
-        "status": agent_config.status,
-        "llm_model": agent_config.llm_model,
-        "voice_provider": agent_config.tts_provider,
-        "voice_id": agent_config.voice_id,
-        "language": agent_config.language,
-        "tools": agent_config.tools
-    }
-
-# API endpoint to list all agents without authentication
+# API endpoint to list all agents
 @app.get("/api/agents")
-async def list_agents(
-    db: Session = Depends(get_db)
-):
+async def list_agents(db: Session = Depends(get_db)):
     agent_loader = AgentLoader(db)
-    agents = agent_loader.get_all_agents()
+    # Using default organization_id of 1
+    agents = agent_loader.get_all_agents(organization_id='fa1c8ec9-67bc-495c-8526-f96fc2a5e3e0')
+    print(f"Agents fetched for user : {agents}")
+    print(f"Total agents found: {len(agents)}")
+    print(f"Agents data: {agents.values()}")
     
     return {
         "agents": [
@@ -596,6 +576,30 @@ async def list_agents(
             }
             for config in agents.values()
         ]
+    }
+
+# API endpoint to get agent info
+@app.get("/api/agent/{agent_id}")
+async def get_agent_info(
+    agent_id: str,
+    db: Session = Depends(get_db)
+):
+    agent_loader = AgentLoader(db)
+    # Using default organization_id of 1
+    agent_config = agent_loader.get_agent_config(agent_id, organization_id=1)
+    if not agent_config:
+        raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
+    
+    return {
+        "id": agent_config.id,
+        "name": agent_config.name,
+        "description": agent_config.description,
+        "status": agent_config.status,
+        "llm_model": agent_config.llm_model,
+        "voice_provider": agent_config.tts_provider,
+        "voice_id": agent_config.voice_id,
+        "language": agent_config.language,
+        "tools": agent_config.tools
     }
 
 # Custom prompt generator for agents
@@ -642,6 +646,19 @@ async def websocket_endpoint(
 ):
     print("From WEBSOCKET_ENDPOINT >>>> /ws/source")
     print(f"WebSocket connection established from {source} with user_id: {user_id} and agent_id: {agent_id}")
+    user = None
+    if user_id:
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            await websocket.close(code=4404, reason="User not found")
+            return
+    else:
+        # If user_id is not provided, we can either set user to None or handle it as needed
+        print("No user_id provided, proceeding without user context.")
+        if not user:
+            await websocket.close(code=4404, reason="User not found")
+            return
+    
     
     # Convert source to SourceEnum
     try:
@@ -695,6 +712,9 @@ async def handle_websocket(
     if not agent_config:
         await websocket.close(code=4404, reason=f"Agent '{agent_id}' not found")
         return
+
+    # Convert boolean status to string
+    agent_config.status = "active" if agent_config.status else "inactive"
 
     if agent_config.status != "active":
         await websocket.close(code=4403, reason=f"Agent '{agent_id}' is not active")
