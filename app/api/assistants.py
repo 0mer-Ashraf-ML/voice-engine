@@ -5,10 +5,11 @@ from app.database import get_db
 from app.auth import get_current_user
 from app.models.user import User
 from app.schemas.assistant import (
-    AgentCreate, AgentUpdate, AgentResponse, AgentsListResponse, 
+    AgentCreate, AgentUpdate, AgentsListResponse, 
     AgentSingleResponse, ToolAttachRequest, ToolDetachRequest
 )
 from app.services.assistant_service import AssistantService
+from app.integrations.llm import LLMIntegration
 
 router = APIRouter()
 
@@ -32,6 +33,48 @@ async def list_agents(
     
     return AgentsListResponse(**result)
 
+@router.get("/providers")
+async def get_available_providers():
+    """Get all available LLM providers"""
+    llm_integration = LLMIntegration()
+    return {
+        "providers":llm_integration.get_supported_providers()
+    }
+
+@router.get("/providers/{provider}/models")
+async def get_provider_models(provider: str):
+    """Get available models for a specific provider"""
+    llm_integration= LLMIntegration()
+    
+    providers = llm_integration.get_supported_providers()
+    if provider not in providers:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported provider: {provider}. Available providers: {providers}"
+        )
+    models_map = llm_integration.get_provider_models(provider)
+    return {
+        "provider": provider,
+        "models": models_map
+    }
+
+@router.get("/tools/available")
+async def get_available_tools(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get all available tools for the organization"""
+    
+    service = AssistantService(db)
+    tools = service.get_available_tools(
+        organization_id=current_user.organization_id
+    )
+    
+    return {
+        "available_tools": tools,
+        "total_tools": len(tools)
+    }
+
 @router.post("/", response_model=AgentSingleResponse, status_code=status.HTTP_201_CREATED)
 async def create_agent(
     agent_data: AgentCreate,
@@ -43,7 +86,7 @@ async def create_agent(
     service = AssistantService(db)
     result = service.create_agent(
         organization_id=current_user.organization_id,
-        user_id=current_user.id,  # ✅ Pass user_id from current_user
+        user_id=current_user.id,
         agent_data=agent_data
     )
     
@@ -220,24 +263,6 @@ async def get_agent_tools(
         "tools": tools,
         "total_tools": len(tools)
     }
-
-@router.get("/tools/available")
-async def get_available_tools(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Get all available tools for the organization"""
-    
-    service = AssistantService(db)
-    tools = service.get_available_tools(
-        organization_id=current_user.organization_id
-    )
-    
-    return {
-        "available_tools": tools,
-        "total_tools": len(tools)
-    }
-
 # @router.post("/{agent_id}/duplicate", response_model=AgentSingleResponse)
 # async def duplicate_agent(
 #     agent_id: str,

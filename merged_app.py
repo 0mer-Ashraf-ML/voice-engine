@@ -6,24 +6,17 @@ import time
 import json
 from collections import defaultdict
 from datetime import datetime, timedelta
-from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, Request, HTTPException, Depends, status
-from fastapi.websockets import WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.exception_handlers import (
-    http_exception_handler,
-    request_validation_exception_handler,
-)
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
 from sqlalchemy.orm import Session
 
 # Internal imports
@@ -563,7 +556,6 @@ async def websocket_call_endpoint(websocket, call_id: str):
     finally:
         manager.disconnect(connection_id)
 
-# WebSocket handler function (from app.py)
 async def handle_websocket(
     websocket: WebSocket,
     source: SourceEnum,
@@ -591,10 +583,14 @@ async def handle_websocket(
     guid = str(uuid.uuid4())
     language = language or LanguageEnum(agent_config.language)
     prompt_generator = AgentPromptGenerator(agent_config)
+    
+    # ✅ NEW: Get the correct API key based on provider
+    api_key = get_api_key_for_provider(agent_config.llm_provider)
+    
     modelInstance = LLM(
         guid,
         prompt_generator,
-        OPENAI_API_KEY,
+        api_key,  # ✅ Use provider-specific API key
         model=agent_config.llm_model
     )
 
@@ -659,9 +655,7 @@ async def handle_websocket(
             asyncio.create_task(text_to_speech.run_async()),
             asyncio.create_task(websocket_manager.run_async()),
         ]
-
         await asyncio.gather(*tasks)
-
     except asyncio.CancelledError:
         await websocket_manager.dispose()
     except Exception as e:
@@ -673,6 +667,37 @@ async def handle_websocket(
             Message(MessageHeader(MessageType.CALL_ENDED), "Call ended")
         )
 
+def get_api_key_for_provider(provider: str) -> str:
+    """Get the appropriate API key based on the LLM provider"""
+    provider = provider.lower()
+    
+    if provider == "openai":
+        api_key = os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY not set")
+        return api_key
+        
+    elif provider == "anthropic":
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY not set")
+        return api_key
+        
+    elif provider == "groq":
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key:
+            raise ValueError("GROQ_API_KEY not set")
+        return api_key
+        
+    elif provider == "gemini":
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY not set")
+        return api_key
+        
+    else:
+        # Fallback to OpenAI
+        return os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
 # METRICS AND MONITORING ENDPOINTS
 @app.get("/metrics")
 async def metrics():

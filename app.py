@@ -3,7 +3,6 @@ import os , uuid , asyncio
 from dotenv import load_dotenv
 from api_request_schemas import (SourceEnum , LanguageEnum)
 from fastapi import FastAPI, WebSocket , Request, HTTPException, Depends
-from fastapi.websockets import WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,7 +21,6 @@ from lib_agents.agent_loader import AgentLoader
 
 from app.database import get_db
 from app.models.user import User
-from app.auth import get_current_user
 from sqlalchemy.orm import Session
 from app.config import settings
 

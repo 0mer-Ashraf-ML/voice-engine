@@ -17,8 +17,8 @@ class AssistantService:
         # Create clean agent ID
         agent_id = f"assistant-{str(assistant.id).replace('-', '')[:12]}"
         
-        # Map model names to clean format
-        model_name = assistant.model_name.replace("gpt-", "").replace("claude-", "")
+        # Map model names to clean format - UPDATED for multi-provider support
+        model_name = self._map_model_name(assistant.model_name, assistant.model_provider)
         
         return {
             "id": agent_id,
@@ -47,6 +47,23 @@ class AssistantService:
             "created_at": assistant.created_at,
             "updated_at": assistant.updated_at
         }
+
+    def _map_model_name(self, model_name: str, provider: str) -> str:
+        """Map full model name to short key for LLM class compatibility"""
+        
+        # For OpenAI models, remove gpt- prefix
+        if provider == "openai":
+            return model_name.replace("gpt-", "")
+        
+        # For Anthropic models, remove claude- prefix to create short key
+        elif provider == "anthropic":
+            if model_name.startswith("claude-"):
+                return model_name.replace("claude-", "")
+            return model_name
+        
+        # For other providers, return as-is
+        else:
+            return model_name
 
     def _agent_id_to_uuid(self, agent_id: str) -> Optional[uuid.UUID]:
         """Convert agent ID back to UUID"""
