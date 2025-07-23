@@ -152,7 +152,7 @@ class LLM:
         # Prepare request parameters
         kwargs = {
             "model": self.model,
-            "max_tokens": 1000,
+            "max_tokens": 250,
             "messages": anthropic_messages,
             "temperature": 0.3
         }
