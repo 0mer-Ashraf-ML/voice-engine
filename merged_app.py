@@ -640,6 +640,12 @@ async def handle_websocket(
             ELEVENLABS_API_KEY,
             agent_config.voice_id
         )
+    elif agent_config.tts_provider == "deepgram":
+        text_to_speech = TextToSpeechDeepgram(
+            guid,
+            dispatcher,
+            DEEPGRAM_API_KEY
+        )
     else:
         text_to_speech = TextToSpeechDeepgram(
             guid,
