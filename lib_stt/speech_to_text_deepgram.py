@@ -22,7 +22,7 @@ class SpeechToTextDeepgram :
             language="en-US",
             channels=1,
             interim_results=True,
-            utterance_end_ms=2000,
+            utterance_end_ms=1000,
             vad_events=True,
 
         )    
