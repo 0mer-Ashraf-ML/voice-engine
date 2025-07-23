@@ -3,18 +3,18 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "postgresql://voicebot:mindmeta123%40@voicebot.postgres.database.azure.com:5432/postgres?sslmode=require"
+    DATABASE_URL: str
 
     # Redis
-    REDIS_URL: str = "redis://localhost:6379"
+    # REDIS_URL: str = "redis://localhost:6379"
 
     # JWT Settings
-    SECRET_KEY: str = "your-secret-key-change-in-production"
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     # API Keys
-    API_KEY_PREFIX: str = "mindmeta_"
+    API_KEY_PREFIX: str
     OPENAI_API_KEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
@@ -24,17 +24,19 @@ class Settings(BaseSettings):
     # Telephony
     TWILIO_ACCOUNT_SID: Optional[str] = None
     TWILIO_AUTH_TOKEN: Optional[str] = None
+    TWILIO_PHONE_NUMBER: Optional[str] = None
+    NGROK_URL: Optional[str] = None  # For webhook URLs
 
     # Payment
     STRIPE_SECRET_KEY: Optional[str] = None
     STRIPE_WEBHOOK_SECRET: Optional[str] = None
 
     # App Settings
-    APP_NAME: str = "Voice API"
-    DEBUG: bool = False
+    APP_NAME: str
+    DEBUG: bool
 
     # Add PORT field
-    PORT: int = 8000  # Default port value
+    PORT: int # Default port value
 
     class Config:
         env_file = ".env"

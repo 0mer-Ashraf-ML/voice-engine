@@ -21,3 +21,6 @@ test/
 /test/
 test/
 voice_venv
+.venv/
+your_app.py
+twilio_test.py
