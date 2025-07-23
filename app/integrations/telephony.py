@@ -192,41 +192,11 @@ class TwilioIntegration(BaseTelephonyProvider):
     </Gather>
 </Response>"""
 
-class VonageIntegration(BaseTelephonyProvider):
-    def __init__(self):
-        # Vonage/Nexmo integration would go here
-        self.api_key = None
-        self.api_secret = None
-    
-    async def make_call(self, **kwargs) -> Dict[str, Any]:
-        return {"error": "Vonage integration not implemented"}
-    
-    async def purchase_phone_number(self, area_code: str) -> Dict[str, Any]:
-        return {"error": "Vonage integration not implemented"}
-    
-    async def release_phone_number(self, number_id: str) -> bool:
-        return False
-
-class TelnyxIntegration(BaseTelephonyProvider):
-    def __init__(self):
-        # Telnyx integration would go here
-        self.api_key = None
-    
-    async def make_call(self, **kwargs) -> Dict[str, Any]:
-        return {"error": "Telnyx integration not implemented"}
-    
-    async def purchase_phone_number(self, area_code: str) -> Dict[str, Any]:
-        return {"error": "Telnyx integration not implemented"}
-    
-    async def release_phone_number(self, number_id: str) -> bool:
-        return False
 
 class TelephonyIntegration:
     def __init__(self):
         self.providers = {
-            "twilio": TwilioIntegration(),
-            "vonage": VonageIntegration(),
-            "telnyx": TelnyxIntegration()
+            "twilio": TwilioIntegration()
         }
     
     async def make_call(

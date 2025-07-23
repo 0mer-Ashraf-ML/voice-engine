@@ -22,7 +22,7 @@ class Assistant(Base):
     model_provider = Column(String(50), default="openai")  # openai, anthropic, groq
     model_name = Column(String(100), default="gpt-4o")
     model_temperature = Column(Float, default=0.7)
-    model_max_tokens = Column(Integer, default=1000)
+    model_max_tokens = Column(Integer, default=250)
     assistant_config = Column(JSON, nullable=True)  # Additional model settings
     
     # Voice Configuration

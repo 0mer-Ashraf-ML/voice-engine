@@ -64,7 +64,7 @@ class LLMIntegration:
         messages: List[Dict[str, Any]],
         model: str,
         temperature: float = 0.7,
-        max_tokens: int = 1000,
+        max_tokens: int = 250,
         tools: Optional[List[Dict]] = None
     ) -> Dict[str, Any]:
         """Generate response using specified provider"""
