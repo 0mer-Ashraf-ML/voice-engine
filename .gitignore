@@ -24,3 +24,7 @@ voice_venv
 .venv/
 your_app.py
 twilio_test.py
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
+branch_structure.json

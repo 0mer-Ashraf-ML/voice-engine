@@ -6,6 +6,8 @@ import time
 import json
 from collections import defaultdict
 from datetime import datetime, timedelta
+import base64
+import websockets
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, Request, HTTPException, Depends, status
@@ -40,6 +42,21 @@ from app.api import api_router
 from app.utils.logger import get_logger, api_logger, security_logger
 from app.websocket import manager
 
+
+from fastapi import FastAPI, WebSocket, Request
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.websockets import WebSocketDisconnect
+from twilio.rest import Client
+from twilio.twiml.voice_response import VoiceResponse, Connect, Say, Stream
+from deepgram import (
+    DeepgramClient,
+    DeepgramClientOptions,
+    LiveTranscriptionEvents,
+    LiveOptions,
+    SpeakOptions
+)
+import httpx
+
 # Load environment variables
 load_dotenv()
 
@@ -47,10 +64,26 @@ load_dotenv()
 PORT = settings.PORT  
 OUTPUT_MP3_FILES = "output.mp3"
 
+
+# Configuration
+TWILIO_ACCOUNT_SID = settings.TWILIO_ACCOUNT_SID
+TWILIO_AUTH_TOKEN = settings.TWILIO_AUTH_TOKEN
+TWILIO_PHONE_NUMBER = settings.TWILIO_PHONE_NUMBER
+NGROK_URL = settings.NGROK_URL
+# PORT = 5050
+
 # API Keys from settings
 OPENAI_API_KEY = settings.OPENAI_API_KEY
 DEEPGRAM_API_KEY = settings.DEEPGRAM_API_KEY
 ELEVENLABS_API_KEY = settings.ELEVENLABS_API_KEY
+
+SYSTEM_MESSAGE = (
+    "You are a helpful and bubbly Medical assistant who analyze the disease to chat about "
+    "anything the user is interested in and is prepared to offer them facts. "
+    "You have a penchant for dad jokes, owl jokes, and rickrolling – subtly. "
+    "Always stay positive, but work in a joke when appropriate. "
+    "Keep responses concise and conversational as this is a voice conversation."
+)
 
 # Initialize logger
 logger = get_logger(__name__)
@@ -772,6 +805,272 @@ if settings.DEBUG:
                 ip: len(requests) for ip, requests in rate_limit_storage.items()
             }
         }
+# ============ INBOUND CALL HANDLING ============
+@app.api_route("/incoming-call", methods=["GET", "POST"])
+async def handle_incoming_call(request: Request):
+    """Handle incoming call and return TwiML response to connect to Media Stream."""
+    response = VoiceResponse()
+    response.say("Please wait while we connect your call to the AI voice assistant, powered by Twilio and Deepgram.")
+    response.pause(length=1)
+    response.say("O.K. you can start talking!")
+    host = request.url.hostname
+    connect = Connect()
+    connect.stream(url=f'wss://{host}/media-stream')
+    response.append(connect)
+    return HTMLResponse(content=str(response), media_type="application/xml")
+
+# ============ OUTBOUND CALL HANDLING ============
+@app.post("/make-call")
+async def make_call(request: Request):
+    """Make an outgoing call to the specified phone number."""
+    data = await request.json()
+    to_phone_number = data.get("to")
+    if not to_phone_number:
+        return {"error": "Phone number is required"}
+
+    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    try:
+        call = client.calls.create(
+            url=f"{NGROK_URL}/outgoing-call",
+            to=to_phone_number,
+            from_=TWILIO_PHONE_NUMBER
+        )
+        return {"call_sid": call.sid, "status": "Call initiated successfully"}
+    except Exception as e:
+        return {"error": f"Failed to initiate call: {str(e)}"}
+
+@app.api_route("/outgoing-call", methods=["GET", "POST"])
+async def handle_outgoing_call(request: Request):
+    """Handle outgoing call and return TwiML response to connect to Media Stream."""
+    response = VoiceResponse()
+    response.say("Please wait while we connect your call to the AI voice assistant...")
+    response.pause(length=1)
+    response.say("O.K. you can start talking!")
+    host = request.url.hostname
+    connect = Connect()
+    connect.stream(url=f'wss://{host}/media-stream')
+    response.append(connect)
+    return HTMLResponse(content=str(response), media_type="application/xml")
+
+# ============ SHARED MEDIA STREAM HANDLER ============
+@app.websocket("/media-stream")
+async def handle_media_stream(websocket: WebSocket):
+    """Handle WebSocket connections between Twilio and Deepgram for both inbound and outbound calls."""
+    print("Client connected")
+    await websocket.accept()
+
+    # Initialize Deepgram client
+    deepgram = DeepgramClient(DEEPGRAM_API_KEY)
+    
+    # Connection specific state
+    stream_sid = None
+    latest_media_timestamp = 0
+    conversation_history = []
+    
+    # Set up Deepgram live transcription
+    dg_connection = deepgram.listen.asyncwebsocket.v("1")
+    
+    try:
+        # Configure Deepgram options
+        options = LiveOptions(
+            model="nova-3",
+            language="en-US",
+            encoding="mulaw",
+            channels=1,
+            sample_rate=8000,
+            interim_results=True,
+            utterance_end_ms=1000,
+            vad_events=True,
+            endpointing=300
+        )
+
+        # Start Deepgram connection
+        if await dg_connection.start(options):
+            print("Deepgram connection started successfully")
+        else:
+            print("Failed to start Deepgram connection")
+            return
+
+        async def process_audio(websocket, dg_connection):
+            """Receive audio data from Twilio and send it to Deepgram."""
+            nonlocal stream_sid, latest_media_timestamp
+            try:
+                async for message in websocket.iter_text():
+                    data = json.loads(message)
+                    if data['event'] == 'media':
+                        latest_media_timestamp = int(data['media']['timestamp'])
+                        # Send audio to Deepgram if connected
+                        audio_data = base64.b64decode(data['media']['payload'])
+                        await dg_connection.send(audio_data)
+                    elif data['event'] == 'start':
+                        stream_sid = data['start']['streamSid']
+                        print(f"Stream started {stream_sid}")
+                        # Send initial greeting
+                        await send_ai_response(websocket, stream_sid, 
+                            "Hello there! I am an AI voice assistant powered by Twilio and Deepgram. You can ask me for facts, jokes, or anything you can imagine. How can I help you?")
+                    elif data['event'] == 'stop':
+                        print("Stream stopped")
+                        break
+            except WebSocketDisconnect:
+                print("Client disconnected.")
+            except Exception as e:
+                print(f"Error in process_audio: {e}")
+
+        # Set up event handlers for Deepgram (must be async)
+        async def on_message(self, result, **kwargs):
+            sentence = result.channel.alternatives[0].transcript
+            if result.is_final and sentence.strip():
+                print(f"Final transcript: {sentence}")
+                # Add user message to conversation history
+                conversation_history.append({"role": "user", "content": sentence})
+                
+                # Process user input
+                await process_user_input(websocket, stream_sid, sentence, conversation_history)
+
+        async def on_metadata(self, metadata, **kwargs):
+            print(f"Deepgram metadata received")
+
+        async def on_speech_started(self, speech_started, **kwargs):
+            print("Speech started")
+
+        async def on_utterance_end(self, utterance_end, **kwargs):
+            print("Utterance ended")
+
+        async def on_open(self, open, **kwargs):
+            print("Deepgram connection opened")
+
+        async def on_close(self, close, **kwargs):
+            print("Deepgram connection closed")
+
+        async def on_error(self, error, **kwargs):
+            print(f"Deepgram error: {error}")
+
+        # Register event handlers
+        dg_connection.on(LiveTranscriptionEvents.Transcript, on_message)
+        dg_connection.on(LiveTranscriptionEvents.Metadata, on_metadata)
+        dg_connection.on(LiveTranscriptionEvents.SpeechStarted, on_speech_started)
+        dg_connection.on(LiveTranscriptionEvents.UtteranceEnd, on_utterance_end)
+        dg_connection.on(LiveTranscriptionEvents.Open, on_open)
+        dg_connection.on(LiveTranscriptionEvents.Close, on_close)
+        dg_connection.on(LiveTranscriptionEvents.Error, on_error)
+
+        async def process_user_input(websocket, stream_sid, user_input, conversation_history):
+            """Process user input and generate AI response."""
+            try:
+                # Generate AI response
+                ai_response = await generate_ai_response(conversation_history)
+                if ai_response:
+                    conversation_history.append({"role": "assistant", "content": ai_response})
+                    await send_ai_response(websocket, stream_sid, ai_response)
+            except Exception as e:
+                print(f"Error processing user input: {e}")
+
+        # Run the audio processing task
+        await process_audio(websocket, dg_connection)
+
+    except Exception as e:
+        print(f"Error in media stream handler: {e}")
+    finally:
+        if dg_connection:
+            await dg_connection.finish()
+
+async def generate_ai_response(conversation_history):
+    """Generate AI response using OpenAI or any other LLM."""
+    try:
+        # Using OpenAI for conversation logic (you can replace with any LLM)
+        async with httpx.AsyncClient() as client:
+            messages = [{"role": "system", "content": SYSTEM_MESSAGE}] + conversation_history
+            
+            response = await client.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {OPENAI_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": "gpt-4.1-mini",
+                    "messages": messages,
+                    "max_tokens": 150,
+                    "temperature": 0.8
+                },
+                timeout=10.0
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                return result["choices"][0]["message"]["content"]
+            else:
+                print(f"Error generating AI response: {response.status_code}")
+                return "I'm sorry, I'm having trouble processing that right now."
+                
+    except Exception as e:
+        print(f"Error in generate_ai_response: {e}")
+        return "I apologize, but I'm having some technical difficulties."
+
+async def send_ai_response(websocket, stream_sid, text_response):
+    """Convert text to speech using Deepgram and send audio to Twilio."""
+    try:
+        print(f"Generating speech for: {text_response}")
+        
+        # Initialize Deepgram client for TTS
+        deepgram = DeepgramClient(DEEPGRAM_API_KEY)
+        
+        # Configure TTS options
+        options = SpeakOptions(
+            model="aura-luna-en",  # You can change this to other voices
+            encoding="mulaw",
+            sample_rate=8000
+        )
+        
+        # Generate speech using the updated API
+        response = deepgram.speak.rest.v("1").stream_memory(
+            {"text": text_response}, options
+        )
+        
+        # Check if we have a valid response
+        if hasattr(response, 'stream') and response.stream:
+            # Get audio data from the response
+            audio_data = response.stream.getvalue()
+            
+            if audio_data:
+                # Encode as base64 for Twilio
+                audio_payload = base64.b64encode(audio_data).decode('utf-8')
+                
+                print(f"Sending audio payload of length: {len(audio_payload)}")
+                
+                # Send audio to Twilio in chunks
+                chunk_size = 1024  # Adjust chunk size as needed
+                for i in range(0, len(audio_payload), chunk_size):
+                    chunk = audio_payload[i:i + chunk_size]
+                    audio_message = {
+                        "event": "media",
+                        "streamSid": stream_sid,
+                        "media": {
+                            "payload": chunk
+                        }
+                    }
+                    await websocket.send_json(audio_message)
+                    # Small delay to prevent overwhelming
+                    await asyncio.sleep(0.01)
+                    
+                print("Audio sent successfully")
+            else:
+                print("No audio data received from TTS")
+        else:
+            print("Invalid TTS response received")
+            
+    except Exception as e:
+        print(f"Error in send_ai_response: {e}")
+        # Send a simple fallback message via Twilio's built-in TTS
+        try:
+            fallback_message = {
+                "event": "clear",
+                "streamSid": stream_sid
+            }
+            await websocket.send_json(fallback_message)
+        except Exception as fallback_error:
+            print(f"Fallback error: {fallback_error}")
+
 
 # MAIN EXECUTION
 if __name__ == "__main__":
