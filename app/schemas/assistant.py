@@ -170,7 +170,7 @@ class AssistantCreate(BaseModel):
     model_provider: str = "openai"
     model_name: str = "gpt-4o"
     model_temperature: float = 0.7
-    model_max_tokens: int = 1000
+    model_max_tokens: int = 250
     assistant_config: Optional[Dict[str, Any]] = None
     
     # Voice Configuration

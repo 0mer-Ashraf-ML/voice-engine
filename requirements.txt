@@ -67,3 +67,5 @@ urllib3==2.5.0
 uvicorn==0.35.0
 websockets==15.0.1
 yarl==1.20.1
+psycopg2-binary==2.9.10
+anthropic==0.58.2

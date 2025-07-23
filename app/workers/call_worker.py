@@ -128,9 +128,10 @@ async def _process_call_with_ai(call: Call, assistant: Assistant, audio_data: st
         llm_result = await llm_integration.generate_response(
             provider=assistant.model_provider,
             messages=messages,
-            model=assistant.model_name,
+            model=assistant.model_name, 
             temperature=assistant.model_temperature,
-            max_tokens=assistant.model_max_tokens
+            max_tokens=assistant.model_max_tokens,
+            tools=assistant.tools if hasattr(assistant, 'tools') else None
         )
         
         response_text = ""

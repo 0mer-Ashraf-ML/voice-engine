@@ -4,6 +4,7 @@ from typing import Optional
 class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
+    DATABASE_URL: str
 
     # Redis
     # REDIS_URL: str = "redis://localhost:6379"
